@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Online</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; overflow: hidden; font-family: sans-serif; }
+        .player-wrap {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        .player-wrap iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .brand {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            z-index: 10;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            pointer-events: none;
+        }
+        .error {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #fff;
+            text-align: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .error h1 { color: #e50914; font-size: 32px; }
+        .error input, .error button {
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+        }
+        .error button {
+            background: #e50914;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        // URL से TMDB ID निकालें
+        // जैसे: /1440098  या  /?tmdb=1440098  या  /1440098?title=Movie
+        function getTmdbId() {
+            const path = window.location.pathname.replace(/^\/|\/$/g, '');
+            const params = new URLSearchParams(window.location.search);
+
+            // Query string से
+            if (params.get('tmdb')) {
+                return params.get('tmdb').replace(/[^0-9]/g, '');
+            }
+            // URL path से
+            if (/^\d+$/.test(path)) {
+                return path;
+            }
+            return null;
+        }
+
+        // Title पढ़ें (optional)
+        function getTitle() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('title') || 'Watch Online';
+        }
+
+        const tmdbId = getTmdbId();
+        const app = document.getElementById('app');
+
+        if (!tmdbId) {
+            // अगर ID नहीं मिली तो होम पेज दिखाएँ
+            app.innerHTML = `
+                <div class="error">
+                    <h1>🎬 My Movie Site</h1>
+                    <p>TMDB ID डालें और मूवी देखें</p>
+                    <div>
+                        <input type="number" id="tmdbInput" placeholder="जैसे: 1440098" />
+                        <button onclick="goToMovie()">Play</button>
+                    </div>
+                </div>
+            `;
+            window.goToMovie = function() {
+                const id = document.getElementById('tmdbInput').value.trim();
+                if (id) window.location.href = '/' + id;
+            };
+        } else {
+            // असली प्लेयर
+            const title = getTitle();
+            const encodedTitle = encodeURIComponent(title);
+            const embedUrl = `https://embed.vidrift.net/embed/movie/${tmdbId}?title=${encodedTitle}&hide=volume,server,lock,pip,cast`;
+
+            app.innerHTML = `
+                <div class="player-wrap">
+                    <iframe 
+                        src="${embedUrl}"
+                        allowfullscreen 
+                        allow="autoplay; fullscreen"
+                        referrerpolicy="no-referrer">
+                    </iframe>
+                    <div class="brand">🎬 MyMovieSite</div>
+                </div>
+            `;
+
+            // पेज का title अपडेट करें
+            document.title = title + ' — Watch Online';
+        }
+    </script>
+</body>
+      </html>
