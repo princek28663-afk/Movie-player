@@ -90,7 +90,7 @@
             // अगर ID नहीं मिली तो होम पेज दिखाएँ
             app.innerHTML = `
                 <div class="error">
-                    <h1>🎬 My Movie Site</h1>
+                    <h1>movieadda</h1>
                     <p>TMDB ID डालें और मूवी देखें</p>
                     <div>
                         <input type="number" id="tmdbInput" placeholder="जैसे: 1440098" />
@@ -106,7 +106,7 @@
             // असली प्लेयर
             const title = getTitle();
             const encodedTitle = encodeURIComponent(title);
-            const embedUrl = `https://embed.vidrift.net/embed/movie/${tmdbId}?title=${encodedTitle}&hide=volume,server,lock,pip,cast`;
+            const embedUrl = `https://embed.vidrift.net/embed/movie/${tmdbId}?title=${encodedTitle}&hide=,server,lock,pip,cast`;
 
             app.innerHTML = `
                 <div class="player-wrap">
@@ -116,7 +116,7 @@
                         allow="autoplay; fullscreen"
                         referrerpolicy="no-referrer">
                     </iframe>
-                    <div class="brand">🎬 MyMovieSite</div>
+                    <div class="brand">movieadda</div>
                 </div>
             `;
 
